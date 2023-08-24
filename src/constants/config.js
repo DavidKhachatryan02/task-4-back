@@ -1,7 +1,7 @@
-const BCRYPT_SALT_ROUNDS = 8;
 const JWT_SECRET_KEY = "aaa";
+const JWT_EXPIRE_TIME = 1000;
 
 module.exports = {
-    BCRYPT_SALT_ROUNDS,
-    JWT_SECRET_KEY,
-  };
+  JWT_SECRET_KEY,
+  JWT_EXPIRE_TIME,
+};
