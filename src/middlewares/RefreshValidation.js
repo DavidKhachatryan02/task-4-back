@@ -10,7 +10,7 @@ const RefreshValidation = (req, res, next) => {
     const { error } = refreshSchema.validate(req.body);
 
     if (error) {
-      res.status(401).send({ error: "Refresh Token Validation Error" });
+      res.status(400).send({ error: "Refresh Token Validation Error" });
       return;
     }
     next();

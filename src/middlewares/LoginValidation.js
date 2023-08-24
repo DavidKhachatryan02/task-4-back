@@ -10,7 +10,7 @@ const LoginValidation = (req, res, next) => {
     const { error } = LoginSchema.validate(req.body);
 
     if (error) {
-      res.status(401).send({ error: "Login Inputs Validation Error" });
+      res.status(400).send({ error: "Login Inputs Validation Error" });
       return;
     }
     next();

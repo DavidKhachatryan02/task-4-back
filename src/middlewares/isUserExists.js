@@ -6,7 +6,7 @@ const isUserExists = async (req, res, next) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      res.status(401).send({ error: "User not exists" });
+      res.status(400).send({ error: "User not exists" });
     }
 
     req.user = user;

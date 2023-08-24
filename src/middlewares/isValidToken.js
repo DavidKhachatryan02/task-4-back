@@ -6,7 +6,7 @@ const isValidToken = async (req, res, next) => {
     const { refreshToken, accessToken } = req.body;
 
     if (!verifyAuthToken(accessToken)) {
-      res.status(401).send({ error: "Something wrong with AccessToken" });
+      res.status(400).send({ error: "Something wrong with AccessToken" });
     }
 
     const { id } = verifyAuthToken(accessToken);
@@ -14,11 +14,11 @@ const isValidToken = async (req, res, next) => {
     const user = await prisma.user.findUnique({ where: { id } });
 
     if (accessToken !== user.accessToken) {
-      res.status(401).send({ error: "Wrong AccessToken" });
+      res.status(400).send({ error: "Wrong AccessToken" });
     }
 
     if (refreshToken !== user.refreshToken) {
-      res.status(401).send({ error: "Wrong refreshToken" });
+      res.status(400).send({ error: "Wrong refreshToken" });
     }
 
     req.user = user;

@@ -1,5 +1,4 @@
 const prisma = require("../services/prisma");
-// const { InvalidCredentialsError, UserNotExists } = require("../errors/auth");
 const { JWT_EXPIRE_TIME } = require("../constants/config");
 const { generateToken } = require("../utils");
 

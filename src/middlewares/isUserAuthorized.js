@@ -5,11 +5,11 @@ const isUserAuthorized = async (req, res, next) => {
     const accessToken = req.headers.authorization.replace("Bearer ", "");
 
     if (!accessToken) {
-      res.status(401).send({ error: "User not authorised" });
+      res.status(400).send({ error: "User not authorised" });
     }
 
     if (!verifyAuthToken(accessToken)) {
-      res.status(401).send({ error: "Something is wrong with Token" });
+      res.status(400).send({ error: "Something is wrong with Token" });
     }
 
     req.user = verifyAuthToken(accessToken);
