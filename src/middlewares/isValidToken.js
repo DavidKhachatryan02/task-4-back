@@ -1,3 +1,4 @@
+const { TokenExpiredError } = require("jsonwebtoken");
 const prisma = require("../services/prisma");
 const { verifyAuthToken } = require("../utils");
 
@@ -5,20 +6,18 @@ const isValidToken = async (req, res, next) => {
   try {
     const { refreshToken, accessToken } = req.body;
 
-    if (!verifyAuthToken(accessToken)) {
-      res.status(400).send({ error: "Something wrong with AccessToken" });
-    }
+    const user = await prisma.user.findUnique({ where: { refreshToken } });
 
-    const { id } = verifyAuthToken(accessToken);
-
-    const user = await prisma.user.findUnique({ where: { id } });
+    console.log(user);
 
     if (accessToken !== user.accessToken) {
       res.status(400).send({ error: "Wrong AccessToken" });
+      return;
     }
 
     if (refreshToken !== user.refreshToken) {
       res.status(400).send({ error: "Wrong refreshToken" });
+      return;
     }
 
     req.user = user;

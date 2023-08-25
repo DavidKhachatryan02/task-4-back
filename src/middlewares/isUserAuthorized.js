@@ -2,14 +2,14 @@ const { verifyAuthToken } = require("../utils");
 
 const isUserAuthorized = async (req, res, next) => {
   try {
-    const accessToken = req.headers.authorization.replace("Bearer ", "");
-
-    if (!accessToken) {
-      res.status(400).send({ error: "User not authorised" });
+    const headersAuth = req.headers.authorization;
+    if (!headersAuth) {
+      res.status(404).send({error:"header not exists"});
     }
+    const accessToken = headersAuth.replace("Bearer ", "");
 
     if (!verifyAuthToken(accessToken)) {
-      res.status(400).send({ error: "Something is wrong with Token" });
+      res.status(401).send({ error: "Something is wrong with Token" });
     }
 
     req.user = verifyAuthToken(accessToken);

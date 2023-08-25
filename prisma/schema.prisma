@@ -22,6 +22,6 @@ model User {
   mobilePhone      String
   isCoreTeamMember Boolean
   code             String
-  refreshToken     String?
+  refreshToken     String @unique
   accessToken      String?
 }

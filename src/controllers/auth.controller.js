@@ -5,6 +5,9 @@ const { generateToken } = require("../utils");
 const getMe = async (req, res, next) => {
   try {
     const { id } = req.user;
+    if (!id) {
+      res.status(401)({ error: "error 404" });
+    }
 
     const userWithTokens = await prisma.user.findUnique({
       where: {
