@@ -1,7 +1,10 @@
 const Joi = require("joi");
+const { InvalidBody } = require("../errors/validation");
 
 const LoginSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string()
+    .email()
+    .required(),
   code: Joi.string().required(),
 });
 
@@ -10,9 +13,9 @@ const LoginValidation = (req, res, next) => {
     const { error } = LoginSchema.validate(req.body);
 
     if (error) {
-      res.status(400).send({ error: "Login Inputs Validation Error" });
-      return;
+      return next(new InvalidBody());
     }
+
     next();
   } catch (e) {
     console.error(

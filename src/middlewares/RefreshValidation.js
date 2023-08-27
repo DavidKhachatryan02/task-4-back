@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { InvalidBody } = require("../errors/validation");
 
 const refreshSchema = Joi.object({
   refreshToken: Joi.string().required(),
@@ -10,9 +11,9 @@ const RefreshValidation = (req, res, next) => {
     const { error } = refreshSchema.validate(req.body);
 
     if (error) {
-      res.status(400).send({ error: "Refresh Token Validation Error" });
-      return;
+      return next(new InvalidBody());
     }
+
     next();
   } catch (e) {
     console.error(

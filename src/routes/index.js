@@ -9,12 +9,15 @@ const { isValidToken } = require("../middlewares/isValidToken");
 const authRouter = express.Router();
 
 authRouter.post("/login", LoginValidation, isUserExists, authController.login);
+
 authRouter.post(
   "/refreshToken",
   RefreshValidation,
+  isUserAuthorized,
   isValidToken,
   authController.refreshToken
 );
+
 authRouter.get("/getMe", isUserAuthorized, authController.getMe);
 
 module.exports = authRouter;

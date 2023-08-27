@@ -1,14 +1,13 @@
 const prisma = require("../services/prisma");
 const { JWT_EXPIRE_TIME } = require("../constants/config");
 const { generateToken } = require("../utils");
+const { InvalidCredentialsError } = require("../errors/auth");
 
 const getMe = async (req, res, next) => {
   try {
     const { id } = req.user;
-    if (!id) {
-      res.status(401)({ error: "error 404" });
-    }
 
+    return res.status(400).json({ error: "vzgo" });
     const userWithTokens = await prisma.user.findUnique({
       where: {
         id,
@@ -17,7 +16,7 @@ const getMe = async (req, res, next) => {
 
     const { refreshToken, accessToken, ...user } = userWithTokens;
 
-    res.status(200).json({ user });
+    res.status(200).json(user);
 
     next(null);
   } catch (e) {
@@ -27,15 +26,15 @@ const getMe = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, code, id, refreshToken } = req.user;
+    const { id, email, code, refreshToken } = req.user;
 
     const userInputCode = req.body.code;
 
     if (code !== userInputCode) {
-      res.send({ error: "Wrong verifaction Code" });
+      return next(new InvalidCredentialsError());
     }
 
-    const accessToken = generateToken(id);
+    const accessToken = await generateToken(id);
 
     await prisma.user.update({
       where: {
@@ -61,15 +60,11 @@ const refreshToken = async (req, res, next) => {
   try {
     const { id, refreshToken } = req.user;
 
-    const newAccessToken = generateToken(id);
+    const newAccessToken = await generateToken(id);
 
     await prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        accessToken: newAccessToken,
-      },
+      where: { id },
+      data: { accessToken: newAccessToken },
     });
 
     res.status(200).json({ refreshToken, accessToken: newAccessToken });

@@ -1,24 +1,29 @@
+const { UnAuthorizedError } = require("../errors/auth");
 const { verifyAuthToken } = require("../utils");
 
 const isUserAuthorized = async (req, res, next) => {
   try {
     const headersAuth = req.headers.authorization;
+
     if (!headersAuth) {
-      res.status(404).send({error:"header not exists"});
+      return next(new UnAuthorizedError());
     }
+
     const accessToken = headersAuth.replace("Bearer ", "");
+    const payload = verifyAuthToken(accessToken);
 
-    if (!verifyAuthToken(accessToken)) {
-      res.status(401).send({ error: "Something is wrong with Token" });
+    if (!payload) {
+      return next(new UnAuthorizedError());
     }
 
-    req.user = verifyAuthToken(accessToken);
+    req.user = payload;
     next();
   } catch (e) {
     console.error(
       `[middleware]: Error on isUserAuthorized middleware error => ${e}`
     );
-    next(e);
+
+    next(new UnAuthorizedError());
   }
 };
 

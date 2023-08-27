@@ -2,7 +2,7 @@ const prisma = require("./services/prisma");
 const express = require("express");
 const authRouter = require("./routes");
 const cors = require("cors");
-// const { errorHandler } = require("./errors");
+const { errorHandler } = require("./errors");
 
 const app = express();
 const APP_PORT = process.env.PORT || 3000;
@@ -10,7 +10,7 @@ const APP_PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use("/auth", authRouter);
-// app.use(errorHandler);
+app.use(errorHandler);
 
 const main = async () => {
   try {
