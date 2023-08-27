@@ -7,7 +7,6 @@ const getMe = async (req, res, next) => {
   try {
     const { id } = req.user;
 
-    return res.status(400).json({ error: "vzgo" });
     const userWithTokens = await prisma.user.findUnique({
       where: {
         id,
@@ -34,16 +33,14 @@ const login = async (req, res, next) => {
       return next(new InvalidCredentialsError());
     }
 
-    const accessToken = await generateToken(id);
+    const accessToken = generateToken(id);
 
     await prisma.user.update({
-      where: {
-        email,
-      },
-      data: {
-        accessToken,
-      },
+      where: { email },
+      data: { accessToken },
     });
+
+    console.log("update token", accessToken);
 
     res
       .status(200)
@@ -60,7 +57,7 @@ const refreshToken = async (req, res, next) => {
   try {
     const { id, refreshToken } = req.user;
 
-    const newAccessToken = await generateToken(id);
+    const newAccessToken = generateToken(id);
 
     await prisma.user.update({
       where: { id },

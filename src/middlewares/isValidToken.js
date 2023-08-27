@@ -1,18 +1,22 @@
 const { InvalidRefreshToken } = require("../errors/auth");
+const prisma = require("../services/prisma");
 
 const isValidToken = async (req, res, next) => {
   try {
     const { refreshToken, accessToken } = req.body;
 
-    const user = req.user;
+    const user = await prisma.user.findUnique({ where: { refreshToken } });
+    console.log(accessToken, user.accessToken);
 
-    if (accessToken !== user.accessToken) {
-      return next(new Error("Invalid access token"));
-    }
+    // if (accessToken !== user.accessToken) {
+    //   return next(new Error("Invalid access token"));
+    // }
 
     if (refreshToken !== user.refreshToken) {
       return next(new InvalidRefreshToken());
     }
+
+    req.user = user;
 
     next();
   } catch (e) {

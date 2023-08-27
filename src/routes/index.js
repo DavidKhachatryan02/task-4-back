@@ -13,7 +13,6 @@ authRouter.post("/login", LoginValidation, isUserExists, authController.login);
 authRouter.post(
   "/refreshToken",
   RefreshValidation,
-  isUserAuthorized,
   isValidToken,
   authController.refreshToken
 );
