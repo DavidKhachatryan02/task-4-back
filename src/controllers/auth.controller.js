@@ -40,7 +40,7 @@ const login = async (req, res, next) => {
       data: { accessToken },
     });
 
-    console.log("update token", accessToken);
+   // console.log("update token", accessToken);
 
     res
       .status(200)

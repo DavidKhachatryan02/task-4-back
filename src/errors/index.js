@@ -1,6 +1,5 @@
 const {
   InvalidCredentialsError,
-  UserAlreadyExistsError,
   UserNotExists,
   UnAuthorizedError,
   InvalidRefreshToken,
@@ -10,9 +9,6 @@ const InvalidBody = require("./validation");
 const errorHandler = (error, req, res, next) => {
   if (error) {
     switch (error.constructor) {
-      case UserAlreadyExistsError:
-        res.status(409).json({ message: error.message });
-        break;
         case InvalidBody:
           res.status(400).json({ message: error.message });
           break;
