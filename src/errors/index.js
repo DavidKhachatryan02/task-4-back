@@ -9,9 +9,9 @@ const InvalidBody = require("./validation");
 const errorHandler = (error, req, res, next) => {
   if (error) {
     switch (error.constructor) {
-        case InvalidBody:
-          res.status(400).json({ message: error.message });
-          break;
+      case InvalidBody:
+        res.status(400).json({ message: error.message });
+        break;
       case UserNotExists:
         res.status(400).json({ message: error.message });
         break;
