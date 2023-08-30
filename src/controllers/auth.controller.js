@@ -40,8 +40,6 @@ const login = async (req, res, next) => {
       data: { accessToken },
     });
 
-   // console.log("update token", accessToken);
-
     res
       .status(200)
       .json({ jwt: { refreshToken, accessToken }, JWT_EXPIRE_TIME });

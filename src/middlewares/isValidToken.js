@@ -6,11 +6,10 @@ const isValidToken = async (req, res, next) => {
     const { refreshToken, accessToken } = req.body;
 
     const user = await prisma.user.findUnique({ where: { refreshToken } });
-    //console.log(accessToken, user.accessToken);
 
-    // if (accessToken !== user.accessToken) {
-    //   return next(new Error("Invalid access token"));
-    // }
+    if (accessToken !== user.accessToken) {
+      return next(new Error("Invalid access token"));
+    }
 
     if (refreshToken !== user.refreshToken) {
       return next(new InvalidRefreshToken());
