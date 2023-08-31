@@ -1,4 +1,3 @@
-
 class UserNotExists extends Error {
   constructor(email) {
     super(`User with ${email} not found`);
