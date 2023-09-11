@@ -1,26 +1,26 @@
-const { UserNotExists } = require("../errors/auth");
-const prisma = require("../services/prisma");
+// const { UserNotExists } = require("../errors/auth");
+// const prisma = require("../services/prisma");
 
-const isUserExists = async (req, res, next) => {
-  try {
-    const { email } = req.body;
-    const user = await prisma.user.findUnique({ where: { email } });
+// const isUserExists = async (req, res, next) => {
+//   try {
+//     const { email } = req.body;
+//     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!user) {
-      return next(new UserNotExists(email));
-    }
+//     if (!user) {
+//       return next(new UserNotExists(email));
+//     }
 
-    req.user = user;
+//     req.user = user;
 
-    next();
-  } catch (e) {
-    console.error(
-      `[middleware]: Error on isUserExists middleware error => ${e}`
-    );
-    next(e);
-  }
-};
+//     next();
+//   } catch (e) {
+//     console.error(
+//       `[middleware]: Error on isUserExists middleware error => ${e}`
+//     );
+//     next(e);
+//   }
+// };
 
-module.exports = {
-  isUserExists,
-};
+// module.exports = {
+//   isUserExists,
+// };

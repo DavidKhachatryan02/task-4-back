@@ -1,26 +1,26 @@
-const Joi = require("joi");
-const { InvalidBody } = require("../errors/validation");
+// const Joi = require("joi");
+// const { InvalidBody } = require("../errors/validation");
 
-const LoginSchema = Joi.object({
-  email: Joi.string().email().required(),
-  code: Joi.string().required(),
-});
+// const LoginSchema = Joi.object({
+//   email: Joi.string().email().required(),
+//   code: Joi.string().required(),
+// });
 
-const LoginValidation = (req, res, next) => {
-  try {
-    const { error } = LoginSchema.validate(req.body);
+// const LoginValidation = (req, res, next) => {
+//   try {
+//     const { error } = LoginSchema.validate(req.body);
 
-    if (error) {
-      return next(new InvalidBody(error));
-    }
+//     if (error) {
+//       return next(new InvalidBody(error));
+//     }
 
-    next();
-  } catch (e) {
-    console.error(
-      `[middleware]: Error on LoginValidation middleware error => ${e}`
-    );
-    next(e);
-  }
-};
+//     next();
+//   } catch (e) {
+//     console.error(
+//       `[middleware]: Error on LoginValidation middleware error => ${e}`
+//     );
+//     next(e);
+//   }
+// };
 
-module.exports = { LoginValidation };
+// module.exports = { LoginValidation };
