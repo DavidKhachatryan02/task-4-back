@@ -1,6 +1,6 @@
-const sequelize = require("./services/sequilize");
+const sequelize = require("./services/sequelize");
 const express = require("express");
-const authRouter = require("./routes");
+// const authRouter = require("./routes");
 const cors = require("cors");
 // const { errorHandler } = require("./errors");
 
@@ -13,21 +13,19 @@ app.use(express.json());
 // app.use(errorHandler);
 
 const main = async () => {
-  // try {
-  //   await prisma.$connect();
-  //   app.listen(APP_PORT, () => {
-  //     console.log(
-  //       `[server]: Server is running at http://localhost:${APP_PORT}`
-  //     );
-  //   });
-  // } catch (e) {
-  //   console.error(`[server]: Error on initializing server => ${e}`);
-  // }
   try {
+    await sequelize.sync();
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
-  } catch (error) {
+    app.listen(APP_PORT, () => {
+      console.log(
+        `[server]: Server is running at http://localhost:${APP_PORT}`
+      );
+    });
+  } catch (e) {
+    await sequelize.close();
     console.error("Unable to connect to the database:", error);
+    console.error(`[server]: Error on initializing server => ${e}`);
   }
 };
 
