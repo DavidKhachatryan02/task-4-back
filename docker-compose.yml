@@ -10,4 +10,4 @@ services:
       POSTGRES_PASSWORD: example
       POSTGRES_DB: task-4-back
     ports:
-      - 5433:5433
+      - 5432:5432
