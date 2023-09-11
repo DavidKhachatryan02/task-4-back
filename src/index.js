@@ -16,6 +16,10 @@ const main = async () => {
   try {
     await sequelize.sync();
     await sequelize.authenticate();
+    const tables = await sequelize.showAllSchemas();
+    for (const table of tables) {
+      console.log(`Table: ${table}`);
+    }
     console.log("Connection has been established successfully.");
     app.listen(APP_PORT, () => {
       console.log(
