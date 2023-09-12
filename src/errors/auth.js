@@ -4,6 +4,12 @@ class UserNotExists extends Error {
   }
 }
 
+class UserExists extends Error {
+  constructor(email) {
+    super(`User with ${email} already exists`);
+  }
+}
+
 class InvalidCredentialsError extends Error {
   constructor() {
     super("Invalid Code");
@@ -22,6 +28,7 @@ class InvalidRefreshToken extends Error {
 }
 
 module.exports = {
+  UserExists,
   InvalidRefreshToken,
   UnAuthorizedError,
   InvalidCredentialsError,

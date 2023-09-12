@@ -5,13 +5,15 @@ const { LoginValidation } = require("../middlewares/LoginValidation");
 // const { RefreshValidation } = require("../middlewares/RefreshValidation");
 const { isUserExists } = require("../middlewares/isUserExists");
 // const { isValidToken } = require("../middlewares/isValidToken");
+const { isUserRegistered } = require("../middlewares/isUserRegistered");
+const { RegisterValidation } = require("../middlewares/RegisterValidation");
 
 const authRouter = express.Router();
 
 authRouter.post(
   "/register",
-  //   LoginValidation,
-  //   isUserExists,
+  RegisterValidation,
+  isUserRegistered,
   authController.register
 );
 

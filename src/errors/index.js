@@ -3,6 +3,7 @@ const {
   UserNotExists,
   UnAuthorizedError,
   InvalidRefreshToken,
+  UserExists,
 } = require("./auth");
 const InvalidBody = require("./validation");
 
@@ -13,6 +14,9 @@ const errorHandler = (error, req, res, next) => {
         res.status(400).json({ message: error.message });
         break;
       case UserNotExists:
+        res.status(400).json({ message: error.message });
+        break;
+      case UserExists:
         res.status(400).json({ message: error.message });
         break;
       case UnAuthorizedError:
