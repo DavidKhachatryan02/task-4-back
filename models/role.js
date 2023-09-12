@@ -1,21 +1,19 @@
-const { Model } = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
-  class Role extends Model {
-    static associate(models) {
-      Role.belongsToMany(models.User, {
-        through: "UserRole",
-        foreignKey: "roleId",
-      });
-    }
-  }
-  Role.init(
-    {
-      name: DataTypes.STRING,
+const { DataTypes } = require("sequelize");
+const sequelize = require("../src/services/sequelize");
+
+const Role = sequelize.define(
+  "Role",
+  {
+    roleId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    {
-      sequelize,
-      modelName: "Role",
-    }
-  );
-  return Role;
-};
+    name: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+  },
+  { timestamps: false }
+);
+module.exports = Role;

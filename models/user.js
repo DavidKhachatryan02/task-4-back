@@ -1,33 +1,28 @@
-const { Model } = require("sequelize");
+const { DataTypes } = require("sequelize");
+const sequelize = require("../src/services/sequelize");
 
-module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    static associate(models) {
-      User.belongsToMany(models.Role, {
-        through: "UserRole",
-        foreignKey: "userId",
-      });
-    }
-  }
-  User.init(
-    {
-      email: {
-        type: DataTypes.STRING,
-        isEmail: true,
-        allowNull: false,
-        unique: true,
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      password: DataTypes.STRING,
-    },
-    {
-      sequelize,
-      modelName: "User",
-    }
-  );
-  return User;
-};
+const User = sequelize.define("Users", {
+  userId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+  },
+  email: {
+    type: DataTypes.STRING,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+  },
+  refreshToken: {
+    type: DataTypes.STRING,
+  },
+  accessToken: {
+    type: DataTypes.STRING,
+  },
+});
+
+module.exports = User;
