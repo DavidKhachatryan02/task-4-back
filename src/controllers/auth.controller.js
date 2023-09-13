@@ -1,4 +1,5 @@
 const { JWT_EXPIRE_TIME, BCRYPT_SALT_ROUNDS } = require("../constants/config");
+const ROLES = require("../constants/roles");
 const { compare, hash } = require("bcrypt");
 const {
   generateToken,
@@ -8,10 +9,11 @@ const {
 const {
   InvalidCredentialsError,
   UnAuthorizedError,
+  NoSuchRole,
 } = require("../errors/auth");
 const User = require("../../models/user");
-
-//! NEED TO ADD ROlES??
+const Role = require("../../models/role");
+const UserOnRole = require("../../models/userOnRoles");
 
 const getMe = async (req, res, next) => {
   try {
@@ -33,18 +35,32 @@ const getMe = async (req, res, next) => {
 
 const register = async (req, res, next) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, userRole } = req.body;
     const hashedPassword = await hash(password, BCRYPT_SALT_ROUNDS);
     const refreshToken = generateRefreshToken();
     const accessToken = generateToken(email);
 
-    await User.create({
+    const roleId = ROLES[await userRole.toString().toUpperCase()].id;
+
+    if (!roleId) {
+      return next(new NoSuchRole());
+    }
+
+    const role = await Role.findOne({ where: { roleId } });
+
+    const user = await User.create({
       email,
       password: hashedPassword,
       name,
       refreshToken,
       accessToken,
     });
+
+    await UserOnRole.create({
+      userId: user.dataValues.userId,
+      roleId: role.dataValues.roleId,
+    });
+
     res
       .status(200)
       .json({ refreshToken, accessToken, ExpiteTime: JWT_EXPIRE_TIME });

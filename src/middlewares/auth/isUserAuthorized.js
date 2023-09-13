@@ -1,5 +1,5 @@
-const { UnAuthorizedError } = require("../errors/auth");
-const { verifyAuthToken } = require("../utils");
+const { UnAuthorizedError } = require("../../errors/auth");
+const { verifyAuthToken } = require("../../utils");
 
 const isUserAuthorized = async (req, res, next) => {
   try {

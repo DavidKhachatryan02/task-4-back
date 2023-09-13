@@ -1,14 +1,20 @@
 const express = require("express");
 const authController = require("../controllers/auth.controller");
-const { LoginValidation } = require("../middlewares/LoginValidation");
-const { isUserAuthorized } = require("../middlewares/isUserAuthorized");
-const { RefreshValidation } = require("../middlewares/RefreshValidation");
-const { isUserExists } = require("../middlewares/isUserExists");
-const { isValidToken } = require("../middlewares/isValidToken");
-const { isUserRegistered } = require("../middlewares/isUserRegistered");
-const { RegisterValidation } = require("../middlewares/RegisterValidation");
+const { LoginValidation } = require("../middlewares/auth/LoginValidation");
+const { isUserAuthorized } = require("../middlewares/auth/isUserAuthorized");
+const { RefreshValidation } = require("../middlewares/auth/RefreshValidation");
+const { isUserExists } = require("../middlewares/auth/isUserExists");
+const { isValidToken } = require("../middlewares/auth/isValidToken");
+const { isUserRegistered } = require("../middlewares/auth/isUserRegistered");
+const {
+  RegisterValidation,
+} = require("../middlewares/auth/RegisterValidation");
 
 const authRouter = express.Router();
+
+authRouter.get("/getMe", isUserAuthorized, authController.getMe);
+
+authRouter.post("/login", LoginValidation, isUserExists, authController.login);
 
 authRouter.post(
   "/register",
@@ -17,16 +23,12 @@ authRouter.post(
   authController.register
 );
 
-authRouter.post("/login", LoginValidation, isUserExists, authController.login);
-
 authRouter.post(
   "/refreshToken",
   RefreshValidation,
   isValidToken,
   authController.refreshToken
 );
-
-authRouter.get("/getMe", isUserAuthorized, authController.getMe);
 
 authRouter.post("/logout", authController.logout);
 

@@ -1,5 +1,5 @@
-const { InvalidRefreshToken } = require("../errors/auth");
-const User = require("../../models/user");
+const { InvalidRefreshToken } = require("../../errors/auth");
+const User = require("../../../models/user");
 
 const isValidToken = async (req, res, next) => {
   try {

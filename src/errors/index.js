@@ -4,6 +4,7 @@ const {
   UnAuthorizedError,
   InvalidRefreshToken,
   UserExists,
+  NoSuchRole,
 } = require("./auth");
 const InvalidBody = require("./validation");
 
@@ -11,6 +12,9 @@ const errorHandler = (error, req, res, next) => {
   if (error) {
     switch (error.constructor) {
       case InvalidBody:
+        res.status(400).json({ message: error.message });
+        break;
+      case NoSuchRole:
         res.status(400).json({ message: error.message });
         break;
       case UserNotExists:

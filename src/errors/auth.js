@@ -16,6 +16,12 @@ class InvalidCredentialsError extends Error {
   }
 }
 
+class NoSuchRole extends Error {
+  constructor() {
+    super("There is no such role");
+  }
+}
+
 class UnAuthorizedError extends Error {
   constructor() {
     super("No auth token provided");
@@ -29,6 +35,7 @@ class InvalidRefreshToken extends Error {
 
 module.exports = {
   UserExists,
+  NoSuchRole,
   InvalidRefreshToken,
   UnAuthorizedError,
   InvalidCredentialsError,

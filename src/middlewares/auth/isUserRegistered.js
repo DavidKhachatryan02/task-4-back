@@ -1,5 +1,5 @@
-const { UserExists } = require("../errors/auth");
-const User = require("../../models/user");
+const { UserExists } = require("../../errors/auth");
+const User = require("../../../models/user");
 
 const isUserRegistered = async (req, res, next) => {
   try {

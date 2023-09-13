@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const { InvalidBody } = require("../errors/validation");
+const { InvalidBody } = require("../../errors/validation");
 
 const LoginSchema = Joi.object({
   email: Joi.string().email().required(),
