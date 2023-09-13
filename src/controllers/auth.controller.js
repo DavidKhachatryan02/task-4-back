@@ -1,8 +1,35 @@
 const { JWT_EXPIRE_TIME, BCRYPT_SALT_ROUNDS } = require("../constants/config");
 const { compare, hash } = require("bcrypt");
-const { generateToken, generateRefreshToken } = require("../utils");
-const { InvalidCredentialsError } = require("../errors/auth");
+const {
+  generateToken,
+  generateRefreshToken,
+  verifyAuthToken,
+} = require("../utils");
+const {
+  InvalidCredentialsError,
+  UnAuthorizedError,
+} = require("../errors/auth");
 const User = require("../../models/user");
+
+//! NEED TO ADD ROlES??
+
+const getMe = async (req, res, next) => {
+  try {
+    const email = req.user.data;
+
+    const userWithTokens = await User.findOne({ where: { email } });
+    if (!userWithTokens.dataValues.accessToken) {
+      return next(new UnAuthorizedError());
+    }
+    const { refreshToken, accessToken, ...user } = userWithTokens.dataValues;
+
+    res.status(200).json(user);
+
+    next(null);
+  } catch (e) {
+    next(e);
+  }
+};
 
 const register = async (req, res, next) => {
   try {
@@ -10,17 +37,17 @@ const register = async (req, res, next) => {
     const hashedPassword = await hash(password, BCRYPT_SALT_ROUNDS);
     const refreshToken = generateRefreshToken();
     const accessToken = generateToken(email);
-    //!  ROle??
 
-    const user = await User.create({
+    await User.create({
       email,
       password: hashedPassword,
       name,
       refreshToken,
       accessToken,
     });
-    console.log(user);
-    res.status(200).json(user);
+    res
+      .status(200)
+      .json({ refreshToken, accessToken, ExpiteTime: JWT_EXPIRE_TIME });
     next(null);
   } catch (e) {
     next(e);
@@ -39,12 +66,13 @@ const login = async (req, res, next) => {
 
     const accessToken = generateToken(email);
 
-    const [rowCount, [updatedUser]] = await User.update(
-      { accessToken },
-      { where: { email }, returning: true }
-    );
+    await User.update({ accessToken }, { where: { email } });
 
-    res.status(200).json(updatedUser);
+    res.status(200).json({
+      accessToken,
+      refreshToken: req.user.refreshToken,
+      ExpiteTime: JWT_EXPIRE_TIME,
+    });
 
     next(null);
   } catch (e) {
@@ -55,16 +83,17 @@ const login = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
   try {
-    const { id, refreshToken } = req.user;
+    const { email, refreshToken } = req.user.dataValues;
 
-    const newAccessToken = generateToken(id);
+    const newAccessToken = generateToken(email);
 
-    await prisma.user.update({
-      where: { id },
-      data: { accessToken: newAccessToken },
+    await User.update({ accessToken: newAccessToken }, { where: { email } });
+
+    res.status(200).json({
+      refreshToken,
+      accessToken: newAccessToken,
+      ExpiteTime: JWT_EXPIRE_TIME,
     });
-
-    res.status(200).json({ refreshToken, accessToken: newAccessToken });
 
     next(null);
   } catch (e) {
@@ -75,6 +104,10 @@ const refreshToken = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
+    const accessToken = req.headers.authorization.replace("Bearer ", "");
+    const email = verifyAuthToken(accessToken).data;
+    await User.update({ accessToken: null }, { where: { email } });
+    res.status(200).end();
     next(null);
   } catch (e) {
     next(e);
@@ -82,6 +115,7 @@ const logout = async (req, res, next) => {
 };
 
 module.exports = {
+  getMe,
   login,
   refreshToken,
   register,
