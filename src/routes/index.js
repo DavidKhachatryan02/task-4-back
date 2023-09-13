@@ -32,4 +32,6 @@ authRouter.post(
 
 authRouter.post("/logout", authController.logout);
 
+authRouter.post("/addRole", authController.addRole);
+
 module.exports = authRouter;

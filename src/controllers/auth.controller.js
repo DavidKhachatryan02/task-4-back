@@ -20,10 +20,29 @@ const getMe = async (req, res, next) => {
     const email = req.user.data;
 
     const userWithTokens = await User.findOne({ where: { email } });
+
     if (!userWithTokens.dataValues.accessToken) {
       return next(new UnAuthorizedError());
     }
-    const { refreshToken, accessToken, ...user } = userWithTokens.dataValues;
+
+    const { refreshToken, accessToken, password, ...user } =
+      userWithTokens.dataValues;
+
+    const userRoleId = await UserOnRole.findAll({
+      where: {
+        userId: user.userId,
+      },
+    });
+
+    console.log(userRoleId.length);
+
+    //!case with multiple roles
+
+    const { roleId } = userRoleId[0].dataValues;
+
+    const userRole = await Role.findOne({ where: { roleId } });
+
+    user.role = userRole.dataValues.name;
 
     res.status(200).json(user);
 
@@ -42,11 +61,11 @@ const register = async (req, res, next) => {
 
     const roleId = ROLES[await userRole.toString().toUpperCase()].id;
 
-    if (!roleId) {
+    const role = await Role.findOne({ where: { roleId } });
+
+    if (!role) {
       return next(new NoSuchRole());
     }
-
-    const role = await Role.findOne({ where: { roleId } });
 
     const user = await User.create({
       email,
@@ -130,7 +149,36 @@ const logout = async (req, res, next) => {
   }
 };
 
+//! ENDPOINT FOR TEST
+
+const addRole = async (req, res, next) => {
+  try {
+    const { email, role } = req.body;
+
+    const roleId = ROLES[await role.toString().toUpperCase()].id;
+
+    const userRole = await Role.findOne({ where: { roleId } });
+
+    if (!userRole) {
+      return next(new NoSuchRole());
+    }
+
+    const user = await User.findOne({ where: { email } });
+
+    await UserOnRole.create({
+      userId: user.dataValues.userId,
+      roleId: userRole.dataValues.roleId,
+    });
+    res.status(200).end();
+    next(null);
+  } catch (e) {
+    console.error(`addRole error ${e}`);
+    next(e);
+  }
+};
+
 module.exports = {
+  addRole,
   getMe,
   login,
   refreshToken,
