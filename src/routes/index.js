@@ -6,6 +6,7 @@ const { RefreshValidation } = require("../middlewares/auth/RefreshValidation");
 const { isUserExists } = require("../middlewares/auth/isUserExists");
 const { isValidToken } = require("../middlewares/auth/isValidToken");
 const { isUserRegistered } = require("../middlewares/auth/isUserRegistered");
+const { addRoleValidation } = require("../middlewares/auth/addRoleValidation");
 const {
   RegisterValidation,
 } = require("../middlewares/auth/RegisterValidation");
@@ -32,6 +33,11 @@ authRouter.post(
 
 authRouter.post("/logout", authController.logout);
 
-authRouter.post("/addRole", authController.addRole);
+authRouter.post(
+  "/addRole",
+  addRoleValidation,
+  isUserAuthorized,
+  authController.addRole
+);
 
 module.exports = authRouter;

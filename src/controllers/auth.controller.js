@@ -28,21 +28,21 @@ const getMe = async (req, res, next) => {
     const { refreshToken, accessToken, password, ...user } =
       userWithTokens.dataValues;
 
-    const userRoleId = await UserOnRole.findAll({
+    const userRoleIds = await UserOnRole.findAll({
       where: {
         userId: user.userId,
       },
     });
 
-    console.log(userRoleId.length);
+    const userRoles = [];
 
-    //!case with multiple roles
+    for (const userRoleId of userRoleIds) {
+      const { roleId } = userRoleId.dataValues;
+      const userRole = await Role.findOne({ where: { roleId } });
+      userRoles.push(userRole.dataValues.name);
+    }
 
-    const { roleId } = userRoleId[0].dataValues;
-
-    const userRole = await Role.findOne({ where: { roleId } });
-
-    user.role = userRole.dataValues.name;
+    user.roles = userRoles.join(",");
 
     res.status(200).json(user);
 
@@ -149,11 +149,10 @@ const logout = async (req, res, next) => {
   }
 };
 
-//! ENDPOINT FOR TEST
-
 const addRole = async (req, res, next) => {
   try {
-    const { email, role } = req.body;
+    const { role } = req.body;
+    const email = req.user.data;
 
     const roleId = ROLES[await role.toString().toUpperCase()].id;
 
@@ -169,7 +168,10 @@ const addRole = async (req, res, next) => {
       userId: user.dataValues.userId,
       roleId: userRole.dataValues.roleId,
     });
-    res.status(200).end();
+    res
+      .status(200)
+      .send(`Role ${userRole.dataValues.name} is Added to user ${email}`);
+
     next(null);
   } catch (e) {
     console.error(`addRole error ${e}`);
@@ -178,10 +180,10 @@ const addRole = async (req, res, next) => {
 };
 
 module.exports = {
-  addRole,
   getMe,
   login,
   refreshToken,
   register,
   logout,
+  addRole,
 };
