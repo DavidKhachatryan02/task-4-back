@@ -59,7 +59,7 @@ const register = async (req, res, next) => {
     const refreshToken = generateRefreshToken();
     const accessToken = generateToken(email);
 
-    const roleId = ROLES[await userRole.toString().toUpperCase()].id;
+    const roleId = ROLES[await userRole.toUpperCase()].id;
 
     const role = await Role.findOne({ where: { roleId } });
 
@@ -145,16 +145,17 @@ const logout = async (req, res, next) => {
     res.status(200).end();
     next(null);
   } catch (e) {
+    console.error(`Logout error ${e}`);
     next(e);
   }
 };
 
-const addRole = async (req, res, next) => {
+const addRoleToUser = async (req, res, next) => {
   try {
     const { role } = req.body;
     const email = req.user.data;
 
-    const roleId = ROLES[await role.toString().toUpperCase()].id;
+    const roleId = ROLES[await role.toUpperCase()].id;
 
     const userRole = await Role.findOne({ where: { roleId } });
 
@@ -174,6 +175,18 @@ const addRole = async (req, res, next) => {
 
     next(null);
   } catch (e) {
+    console.error(`addRoleToUser error ${e}`);
+    next(e);
+  }
+};
+
+const addRole = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+
+    await Role.create({ name: role });
+    res.status(200).send(`Role ${role} is created`);
+  } catch (e) {
     console.error(`addRole error ${e}`);
     next(e);
   }
@@ -186,4 +199,5 @@ module.exports = {
   register,
   logout,
   addRole,
+  addRoleToUser,
 };

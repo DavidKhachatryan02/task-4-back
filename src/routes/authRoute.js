@@ -34,10 +34,12 @@ authRouter.post(
 authRouter.post("/logout", authController.logout);
 
 authRouter.post(
-  "/addRole",
+  "/addRoleToUser",
   addRoleValidation,
   isUserAuthorized,
-  authController.addRole
+  authController.addRoleToUser
 );
+
+authRouter.post("/addRole", addRoleValidation, authController.addRole);
 
 module.exports = authRouter;
